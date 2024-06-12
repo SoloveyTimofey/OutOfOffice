@@ -1,0 +1,81 @@
+﻿@{
+    Layout = "_ProjectManagerLayout";
+    ViewData["SelectedPage"] = "Projects";
+    ViewData["Title"] = "Projects";
+}
+@model List<Project>
+
+<div class="m-3">
+    <section>
+        <a class="btn btn-primary" asp-action="CreateProject" asp-controller="Project">
+            Create Project
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-plus-circle mb-1" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+            </svg>
+        </a>
+    </section>
+    <main class="mt-2">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Project Type</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Comment</th>
+                    <th>Is Active</th>
+                    <th>Employee Count</th>
+                    <th>Employees</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(Project project in Model)
+                {
+                    <tr>
+                        <td>@project.ProjectType</td>
+                        <td>@project.StartDate</td>
+                        <td>@(project.EndDate)</td>
+                        <td>@(project.Comment??"No Comment")</td>
+                        <td>@project.IsActive</td>
+                        <td>@project.Employees.Count()</td>
+                        <td>
+                            @MakeStringFromEmployees(project.Employees.Take(2).ToList(), project.Employees.Count())
+                        </td>
+                        <td>
+                            <a asp-action="UpdateProject" asp-route-id="@project.Id" class="btn btn-sm btn-warning text-white">Update</a>
+                            @if (project.IsActive)
+                            {
+                                <a asp-action="ChangeProjectActivity" asp-route-id="@project.Id" asp-route-active="false" class="btn btn-sm btn-outline-primary">Deactivate</a>
+                            }
+                            else
+                            {
+                                <a asp-action="ChangeProjectActivity" asp-route-id="@project.Id" asp-route-active="true" class="btn btn-sm btn-primary">Activate</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </main>
+</div>
+
+@functions{
+    private string MakeStringFromEmployees(List<Employee> takenEmployees, int empCount)
+    {
+        System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
+        for (int i = 0; i < takenEmployees.Count(); i++)
+        {
+            if (i<takenEmployees.Count()-1 || empCount<=takenEmployees.Count())
+            {
+                stringBuilder.Append(takenEmployees[i].FullName+(i==takenEmployees.Count()-1?"":", "));
+            }
+            else
+            {
+                stringBuilder.Append(takenEmployees[i].FullName + "...");
+            }
+        }
+
+        return stringBuilder.ToString();
+    }
+}

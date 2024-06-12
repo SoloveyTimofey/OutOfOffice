@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Register";
+}
+
+@model RegisterViewModel
+
+<div class="modal-dialog ">
+    <div class="modal-content rounded-3 shadow">
+        <div class="modal-header p-4 pb-1">
+            <h4 class="fw-bold">Register</h4>
+        </div>
+        <div class="modal-body p-4 p-1">
+            <div class="m-1 text-danger" asp-validation-summary="All"></div>
+            <form method="post" action="Register">
+                <div class="input-group mb-3">
+                    <label class="input-group-text">Email</label>
+                    <input type="text" class="form-control" asp-for="Email" placeholder="Enter Email..." />
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text">Password</label>
+                    <input type="password" class="form-control" asp-for="Password" placeholder="Enter Password..." />
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text">Full Name</label>
+                    <input type="text" class="form-control" asp-for="FullName" placeholder="Enter Full name..."/>
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text">Your are...</label>
+                    <select asp-for="SelectedEmployeeType" class="form-control">
+                        <option value="" disabled>Select your Type</option>
+                        @foreach (var employeeType in Enum.GetValues(typeof(EmployeeType)).Cast<EmployeeType>())
+                        {
+                            <option value="@employeeType">@employeeType</option>
+                        }
+                    </select>
+                </div>
+                <div class="input-group-text mb-3">
+                    <label class="input-group-text">Select Subdivision</label>
+                    <select asp-for="SelectedSubdivision" class="form-control">
+                        <option value="" disabled>Select a Subdivision</option>
+                        @foreach (var subdivision in Enum.GetValues(typeof(Subdivision)).Cast<Subdivision>())
+                        {
+                            <option value="@subdivision">@subdivision</option>
+                        }
+                    </select>
+                </div>
+                <div class="input-group-text mb-3">
+                    <label class="input-group-text">Select Position</label>
+                    <select asp-for="SelectedPosition" class="form-control">
+                        <option value="" disabled>Select a Position</option>
+                        @foreach (var position in Enum.GetValues(typeof(Position)).Cast<Position>())
+                        {
+                            <option value="@position">@position</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" asp-for="IsActive" checked/>
+                    <label class="from-check-label">Are you currently Active</label>
+                </div>
+                <button class="btn btn-primary">Register</button>
+                <a asp-action="SignIn" class="btn btn-outline-secondary ml-2">Sign In</a>
+            </form>
+        </div>
+    </div>
+</div>

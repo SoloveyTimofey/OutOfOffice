@@ -1,0 +1,52 @@
+﻿@{
+    if (Context.Session.GetJson<EmployeeType>("EmployeeType") == EmployeeType.HR)
+    {
+        Layout = "_HRLayout";
+    }
+    else
+    {
+        Layout = "_ProjectManagerLayout";
+    }
+    ViewData["Title"] = Model.Action+ " Leave Requests";
+}
+@model ApprovalRequestActionViewModel
+
+<div class="modal-dialog">
+    <div class="modal-content rounded-3 shadow">
+        <div class="modal-header p-4 pb-1">
+            <h4 class="fw-bold">@Model.Action Approval Request</h4>
+        </div>
+        <div class="modal-body p-4 p-1">
+            <div class="m-1 text-danger" asp-validation-summary="All"></div>
+            <form method="post" action="@(Model.Action+"ApprovalRequest")">
+
+                @if (Model.ApprovalRequest.Id != 0)
+                {
+                    <input type="hidden" asp-for="ApprovalRequest.Id" value="@Model.ApprovalRequest.Id" />
+                }
+                <input type="hidden" asp-for="ApprovalRequest.LeaveRequestId" value="@Model.ApprovalRequest.LeaveRequestId" />
+
+                <small class="text-muted ml-2">you can leave empty*</small>
+                <div class="input-group mb-3">
+                    <label class="input-group-text">Enter Comment</label>
+                    <textarea asp-for="ApprovalRequest.Comment" rows="4" class="form-control">@Html.Raw(Model.ApprovalRequest.Comment)</textarea>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" asp-for="ApprovalRequest.IsApproved" checked />
+                    <label class="from-check-label">Approve Request?</label>
+                </div>
+
+                @if (Model.Action == "Create")
+                {
+                    <button class="btn btn-primary">@Model.Action</button>
+                }
+                else
+                {
+                    <button class="btn btn-primary" asp-route-leaveRequest="@Model.ApprovalRequest" asp-route-update="true">@Model.Action</button>
+                }
+                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary ml-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

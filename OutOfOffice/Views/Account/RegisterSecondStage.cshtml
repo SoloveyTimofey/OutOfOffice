@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Register";
+}
+@model RegisterViewModel
+@inject IUserGetRepository userRepository
+
+<div class="modal-dialog ">
+    <div class="modal-content rounded-3 shadow">
+        <div class="modal-header p-4 pb-1">
+            <h4 class="fw-bold">Register Second Stage</h4>
+        </div>
+        <div class="modal-body p-4 p-1">
+            <div class="m-1 text-danger" asp-validation-summary="All"></div>
+            <form method="post" action="RegisterSecondStage" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Email" value="@Model.Email"/>
+                <input type="hidden" asp-for="FullName" value="@Model.FullName"/>
+                <input type="hidden" asp-for="IsActive" value="@Model.IsActive"/>
+                <input type="hidden" asp-for="Password" value="@Model.Password"/>
+                <input type="hidden" asp-for="SelectedEmployeeType" value="@Model.SelectedEmployeeType"/>
+                <input type="hidden" asp-for="SelectedPosition" value="@Model.SelectedPosition"/>
+                <input type="hidden" asp-for="SelectedSubdivision" value="@Model.SelectedSubdivision"/>
+
+                <small class="text-muted ml-2">you can leave empty*</small>
+                <div class="input-group mb-3">
+                    <label class="input-group-text">Select Photo</label>
+                    <input asp-for="Photo" class="form-control" type="file" accept="image/*" />
+                </div>
+                @if (Model.SelectedEmployeeType!=EmployeeType.HR)
+                {
+                    <div class="input-group-text mb-3">
+                        <label class="input-group-text">Select your HR</label>
+                        <select asp-for="HRManagerId" class="form-control">
+                            <option value="" disabled>Select HR</option>
+                            @foreach (HRManager hr in userRepository.GetAllHRsAsync())
+                            {
+                                <option value="@hr.Id" selected>@hr.FullName</option>
+                            }
+                        </select>
+                    </div>
+                }
+                <button class="btn btn-primary">Register</button>
+                <a asp-action="SignIn" class="btn btn-outline-secondary ml-2">Sign In</a>
+            </form>
+        </div>
+    </div>
+</div>

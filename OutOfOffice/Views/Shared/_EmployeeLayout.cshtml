@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/customStyles.css" />
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <environment include="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    </environment>
+    @RenderSection("Scripts", required: false)
+</head>
+<body>
+    <partial name="Navbar" />
+    <div class="container-fluid">
+        <div class="row">
+            <aside style="width: 120px;">
+                <style>
+                    a {
+                        display: block;
+                    }
+                </style>
+                <a asp-controller="LeaveRequest" asp-action="Index" style="width:120px"
+                   class="btn @((ViewData["SelectedPage"])!.ToString()=="LeaveRequests"?"btn-primary":"btn-outline-secondary") mt-5">Requests</a>
+                <a asp-action="EmployeeProjects" asp-controller="Employee" style="width:120px"
+                   class="btn @((ViewData["SelectedPage"])!.ToString()=="Projects"?"btn-primary":"btn-outline-secondary")">Projects</a>
+            </aside>
+            <main class="col">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+</body>
+</html>

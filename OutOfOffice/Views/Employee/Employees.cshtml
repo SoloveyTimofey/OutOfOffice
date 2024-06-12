@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Employees";
+    ViewData["SelectedPage"] = "Employees";
+    Layout = "_HRLayout";
+}
+@model List<EmployeeBase>
+@inject IImageService imageService
+
+<table class="table table-bordered table-striped m-4">
+    <thead>
+        <tr>
+            <th>Photo</th>
+            <th>Full Name</th>
+            <th>Subdivision</th>
+            <th>Position</th>
+            <th>Is Active</th>
+            <th>Out Of Office Balance</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>
+                    <img height="40" width="40" class="rounded" alt="Avatar" style="object-fit: cover;"
+                         src="@(employee.Photo==null?"~/images/defaultPhoto.jpg":$"data:image/jpg;base64,{await imageService.BytesToString64StringAsync(employee.Photo)}")" />
+                </td>
+                <td>@employee.FullName </td>
+                <td>@employee.Subdivition</td>
+                <td>@employee.Position</td>
+                <td>@employee.IsActive</td>
+                <td>@employee.OutOfOfficeBalance</td>
+                <td>
+                    @if (employee.IsActive)
+                    {
+                        <a asp-controller="Employee" asp-action="ChangeActivity" asp-route-activity="false" asp-route-empId="@employee.Id"
+                            class="btn btn-outline-primary">Deactivate</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Employee" asp-action="ChangeActivity" asp-route-activity="true" asp-route-empId="@employee.Id"
+                           class="btn btn-primary">Activate</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

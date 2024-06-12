@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = Model.Action+ " Leave Request";
+}
+@model LeaveRequestActionViewModel
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+
+
+<div class="modal-dialog">
+    <div class="modal-content rounded-3 shadow">
+        <div class="modal-header p-4 pb-1">
+            <h4 class="fw-bold">@Model.Action Leave Request</h4>
+        </div>
+        <div class="modal-body p-4 p-1">
+            <div class="m-1 text-danger" asp-validation-summary="All"></div>
+            <form method="post" action="@(Model.Action+"LeaveRequest")">
+
+                @if (Model.LeaveRequest.Id!=0)
+                {
+                    <input type="hidden" asp-for="LeaveRequest.Id" value="@Model.LeaveRequest.Id"/>
+                }
+
+                <div class="input-group mb-3">
+                    <label class="input-group-text">Select Absence Reason</label>
+                    <select asp-for="LeaveRequest.AbsenceReason" class="form-control">
+                        <option value="" disabled>Select Absense Reson</option>
+                        @foreach (var absenceReason in Enum.GetValues(typeof(AbsenceReason)).Cast<AbsenceReason>())
+                        {
+                            <option value="@absenceReason">@absenceReason</option>
+                        }
+                    </select>
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text">Select Start Date</label>
+                    <input asp-for="LeaveRequest.StartDate" type="date" class="form-control datepicker" id="startDate" placeholder="Select a date">
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text">Select End Date</label>
+                    <input asp-for="LeaveRequest.EndDate" type="date" class="form-control datepicker" id="endDate" placeholder="Select a date">
+                </div>
+
+                <small class="text-muted ml-2">you can leave empty*</small>
+                <div class="input-group mb-3">
+                    <label class="input-group-text">Enter Comment</label>
+                    <textarea asp-for="LeaveRequest.Comment" rows="4" class="form-control">@Html.Raw(Model.LeaveRequest.Comment)</textarea>
+                </div>
+                @if (Model.Action == "Create")
+                {
+                    <button class="btn btn-primary">@Model.Action</button>
+                }
+                else
+                {
+                    <button class="btn btn-primary" asp-route-leaveRequest="@Model.LeaveRequest" asp-route-update="true">@Model.Action</button>
+                }
+                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary ml-2">Cancel</a>
+            </form>
+        </div>
+        @section Scripts {
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+            <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+            <script>
+                $(function () {
+                    $(".datepicker").datepicker({
+                        dateFormat: "yy-mm-dd"
+                    });
+                });
+            </script>
+        }
+    </div>
+</div>

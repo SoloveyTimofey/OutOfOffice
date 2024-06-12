@@ -1,0 +1,32 @@
+﻿@inject IImageService imageService;
+
+<div class="p-3 bg-dark">
+    <div class="container-fluid mx-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-center text-white">
+
+            <div class="nav me-auto">
+                <a asp-action="Index" asp-controller="Home" class="navbar-brand">Out Of Office</a>
+            </div>
+
+            @if(User?.Identity?.IsAuthenticated ?? false)
+            {
+                EmployeeBase employeeBase = CurrentUserGetter.GetCurrentUser(Context);
+
+                <span>@("Welcome, "+employeeBase.FullName)</span>
+                <div class="mx-2">
+                    <img height="40" width="40" class="rounded" alt="Avatar" style="object-fit: cover;"
+                         src="@(employeeBase.Photo==null?"~/images/defaultPhoto.jpg":$"data:image/jpg;base64,{await imageService.BytesToString64StringAsync(employeeBase.Photo)}")" />
+                </div>
+
+                <div class="text-end mx-2">
+                    <a asp-action="SignOut" asp-controller="Account" class="btn btn-outline-light me-2">Sign Out</a>
+                </div>
+            }
+            else
+            {
+                
+            }
+
+        </div>
+    </div>
+</div>

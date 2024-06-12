@@ -1,0 +1,30 @@
+﻿@{
+    Layout = "_EmployeeLayout";
+    ViewData["Title"] = "My projects";
+    ViewData["SelectedPage"] = "Projects";
+}
+@model List<Project>
+
+<table class="m-4 table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Project Type</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Comment</th>
+            <th>Is Active</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var project in Model)
+        {
+            <tr>
+                <td>@project.ProjectType</td>
+                <td>@project.StartDate</td>
+                <td>@project.EndDate</td>
+                <td>@(project.Comment??"No Comment")</td>
+                <td>@project.IsActive</td>
+            </tr>
+        }
+    </tbody>
+</table>

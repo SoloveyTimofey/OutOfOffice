@@ -1,0 +1,83 @@
+﻿@{
+    Layout = "_EmployeeLayout";
+    ViewData["Title"] = "Leave Requests";
+    ViewData["SelectedPage"] = "LeaveRequests";
+
+}
+@model List<LeaveRequest>
+
+<div class="m-3">
+    <section>
+            <form asp-controller="LeaveRequest" asp-action="CreateLeaveRequest" method="get">
+            <button type="submit" class="btn btn-primary" formtarget="_blank">
+                Add Leave Request
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-plus-circle mb-1" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                </svg>
+            </button>
+        </form>
+    </section>
+    <main class="mt-2">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Absence Reason</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Comment</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (LeaveRequest leaveRequest in Model)
+                {
+                    <tr>
+                        <td>@leaveRequest.AbsenceReason</td>
+                        <td>@leaveRequest.StartDate</td>
+                        <td>@leaveRequest.EndDate</td>
+                        <td>@(leaveRequest.Comment ?? "No Comment")</td>
+                        <td class="@GetColorByStatus(leaveRequest.Status) text-primary">@leaveRequest.Status</td>
+                        <td>
+                            @if (leaveRequest.Status!=LeaveRequestStatus.Canceled)
+                            {
+                                <a asp-action="UpdateLeaveRequest" asp-route-id="@leaveRequest.Id" class="btn btn-sm btn-warning text-white">Update</a>
+                                <a asp-action="RejectLeaveRequest" asp-route-id="@leaveRequest.Id" class="btn btn-danger btn-sm">Cancel</a>
+                            }
+                            else
+                            {
+                                <form asp-action="UpdateLeaveRequest" asp-route-id="@leaveRequest.Id" method="get">
+                                    <button class="btn btn-sm btn-warning text-white">Update</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </main>
+</div>
+
+@functions {
+    string GetColorByStatus(LeaveRequestStatus leaveRequestStatus)
+    {
+        string color;
+        switch (leaveRequestStatus)
+        {
+            case LeaveRequestStatus.New:
+                color = "text-primary";
+                break;
+            case LeaveRequestStatus.Approved:
+                color = "text-success";
+                break;
+            case LeaveRequestStatus.Canceled:
+                color = "text-danger";
+                break;
+            default:
+                throw new NotImplementedException(nameof(leaveRequestStatus));
+        }
+
+        return color;
+    }
+}

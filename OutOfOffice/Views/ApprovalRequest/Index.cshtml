@@ -1,0 +1,127 @@
+﻿@{
+    if (Context.Session.GetJson<EmployeeType>("EmployeeType")==EmployeeType.HR)
+    {
+        Layout = "_HRLayout";
+    }
+    else
+    {
+        Layout = "_ProjectManagerLayout";
+    }
+    ViewData["Title"] = "Requests";
+    ViewData["SelectedPage"] = "Requests";
+}
+@model List<LeaveRequest>
+@inject IImageService imageService;
+
+<div class="m-3">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <h4 class="text-center">
+                    Leave Requests
+                </h4>
+                <table class="table table-bordered table-striped table-sm">
+                    <thead>
+                        <tr style="height:55px">
+                            <th>Photo</th>
+                            <th>Employee Full Name</th>
+                            <th>Absence Reason</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                            <th>Comment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var leaveRequest in Model)
+                        {
+                            <tr style="height:60px;">
+                                <th>
+                                    <img height="40" width="40" class="rounded" alt="Avatar" style="object-fit: cover;"
+                                         src="@(leaveRequest.Employee.Photo==null?"~/images/defaultPhoto.jpg":$"data:image/jpg;base64,{await imageService.BytesToString64StringAsync(leaveRequest.Employee.Photo)}")" />
+                                </th>
+                                <td>@leaveRequest.Employee.FullName</td>
+                                <td>@leaveRequest.AbsenceReason</td>
+                                <td>@leaveRequest.StartDate</td>
+                                <td>@leaveRequest.EndDate</td>
+                                <td class="@GetColorByStatus(leaveRequest.Status) text-primary">@leaveRequest.Status</td>
+                                <td>@(leaveRequest.Comment ?? "No Comment")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-6">
+                <h4 class="text-center">
+                    Approval Requests
+                </h4>
+                <table class="table table-bordered table-striped table-sm">
+                    <thead>
+                        <tr style="height:55px">
+                            <th>Approver Full Name</th>
+                            <th>Is Approved</th>
+                            <th>Comment</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var leaveRequest in Model)
+                        {
+                            @if (leaveRequest.ApprovalRequest != null)
+                            {
+                                leaveRequest.ApprovalRequest.LeaveRequest = leaveRequest;
+                                <tr style="height:60px;">
+                                    <td>@leaveRequest.ApprovalRequest.Approver.FullName</td>
+                                    <td>@leaveRequest.ApprovalRequest.IsApproved</td>
+                                    <td>@(leaveRequest.ApprovalRequest.Comment??"No Comment")</td>
+                                    <td class="text-center">
+                                        No Action
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr style="height:60px;" class="text-center">
+                                    <td colspan="3">No Approval Request</td>
+                                    @if (Context.Session.GetJson<EmployeeType>("EmployeeType") != EmployeeType.ProjectManager)
+                                    {
+                                        <td>
+                                            <a asp-action="CreateApprovalRequest" asp-route-leaveRequestId="@leaveRequest.Id" class="btn btn-sm btn-primary text-white text-sm-center">Approve Request</a>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td >No Action</td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetColorByStatus(LeaveRequestStatus leaveRequestStatus)
+    {
+        string color;
+        switch (leaveRequestStatus)
+        {
+            case LeaveRequestStatus.New:
+                color = "text-primary";
+                break;
+            case LeaveRequestStatus.Approved:
+                color = "text-success";
+                break;
+            case LeaveRequestStatus.Canceled:
+                color = "text-danger";
+                break;
+            default:
+                throw new NotImplementedException(nameof(leaveRequestStatus));
+        }
+
+        return color;
+    }
+}
